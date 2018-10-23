@@ -1,0 +1,24 @@
+---
+title: "Midterm Project"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(patchwork)
+library(wordcountaddin)
+```
+
+Testing word count
+
+```{r}
+accel_data = read.csv("data/p8105_mtp_data.csv")
+```
+
+
+```{r}
+wordcountaddin::text_stats("p8105_mtp_jih2119.Rmd")
+```
+
+
