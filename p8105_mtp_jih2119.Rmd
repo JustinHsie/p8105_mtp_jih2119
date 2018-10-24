@@ -30,37 +30,43 @@ accel_data = read_csv(file = "data/p8105_mtp_data.csv") %>%
   mutate(total_act = rowSums(.[,3:1440], na.rm = TRUE)) %>% 
   mutate(avg_act = rowMeans(.[,3:1440], na.rm = TRUE))
 
-accel_data[1:10, 1:1444]
 ```
 
 This dataset consists of week, day, and activity variables. Each activity column represents a summary of the voltage signal in a minute of the day. There are 329 rows and 1,442 variables total.
 
-```{r total_act_plot}
-ggplot(accel_data, aes(x = week, y = total_act)) +  
+```{r total_act_per_day_over_time}
+year_plot = ggplot(accel_data, aes(x = week, y = total_act)) +
   geom_point() +
   geom_smooth()
+year_plot
 ```
 
-```{r days}
-ggplot(accel_data, aes(x = day, y = avg_act)) +  
+```{r all_weeks_avg_per_day}
+week_plot = ggplot(accel_data, aes(x = day, y = avg_act)) + 
   geom_boxplot()
+week_plot
 ```
 
 ```{r 24_hour_sunday}
 sunday_act = accel_data %>% 
   gather(key = daily_act, value = activity, activity_1:activity_1440) %>% 
-  filter(day == "Sunday" & week == 1) %>% 
+  filter(
+      day == "Monday" | day == "Wednesday" | day == "Friday",
+      week == 30) %>% 
   mutate(daily_act = str_replace(daily_act, "activity_", "")) %>% 
   mutate(daily_act = as.numeric(daily_act) / 60)
 
-ggplot(sunday_act, aes(x = daily_act, y = activity)) +
+day_plot = ggplot(sunday_act, aes(x = daily_act, y = activity)) +
   geom_point() +
-  scale_x_continuous(breaks = seq(0, 24, by = 1))
+  scale_x_continuous(breaks = seq(0, 24, by = 2)) +
+  facet_grid(. ~ day)
+day_plot
 ```
 
 
+
 ```{r}
-#wordcountaddin::text_stats("p8105_mtp_jih2119.Rmd")
+wordcountaddin::text_stats("p8105_mtp_jih2119.Rmd")
 ```
 
 
