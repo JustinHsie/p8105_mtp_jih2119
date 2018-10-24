@@ -3,22 +3,51 @@ title: "Midterm Project"
 output: github_document
 ---
 
-```{r}
+###Setup
+
+```{r setup, message = FALSE }
 library(tidyverse)
 library(knitr)
 library(patchwork)
+library(viridis)
 library(wordcountaddin)
 ```
 
-Testing word count
+###Data Cleaning
 
-```{r}
-accel_data = read.csv("data/p8105_mtp_data.csv")
+```{r clean_data, message = FALSE}
+accel_data = read_csv(file = "data/p8105_mtp_data.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(day = as.factor(day)) %>% 
+  mutate(day = 
+           factor(day, levels = 
+                    c("Sunday", "Monday", "Tuesday", 
+                      "Wednesday", "Thursday",
+                      "Friday", "Saturday"), 
+                  ordered = TRUE)) %>% 
+  arrange(day) %>% 
+  arrange(week) %>% 
+  mutate(total_act = rowSums(.[,3:1440], na.rm = TRUE)) %>% 
+  mutate(avg_act = rowMeans(.[,3:1440], na.rm = TRUE))
+
+accel_data[1:10, 1:1444]
+```
+
+This dataset consists of week, day, and activity variables. Each activity column represents a summary of the voltage signal in a minute of the day. There are 329 rows and 1,442 variables total.
+
+```{r total_act_plot}
+ggplot(accel_data, aes(x = week, y = total_act)) +  
+  geom_point()
+```
+
+```{r days}
+ggplot(accel_data, aes(x = day, y = avg_act)) +  
+  geom_boxplot()
 ```
 
 
 ```{r}
-wordcountaddin::text_stats("p8105_mtp_jih2119.Rmd")
+#wordcountaddin::text_stats("p8105_mtp_jih2119.Rmd")
 ```
 
 
