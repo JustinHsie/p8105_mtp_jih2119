@@ -3,7 +3,7 @@ title: "Midterm Project"
 output: github_document
 ---
 
-###Setup
+####Setup
 
 ```{r setup, message = FALSE }
 library(tidyverse)
@@ -29,40 +29,75 @@ accel_data = read_csv(file = "data/p8105_mtp_data.csv") %>%
   arrange(week) %>% 
   mutate(total_act = rowSums(.[,3:1440], na.rm = TRUE)) %>% 
   mutate(avg_act = rowMeans(.[,3:1440], na.rm = TRUE))
-
 ```
 
 This dataset consists of week, day, and activity variables. Each activity column represents a summary of the voltage signal in a minute of the day. There are 329 rows and 1,442 variables total.
 
-```{r total_act_per_day_over_time}
-year_plot = ggplot(accel_data, aes(x = week, y = total_act)) +
-  geom_point() +
-  geom_smooth()
+###Total Activity Over Time
+
+```{r total_act_per_day_over_time, message = FALSE}
+year_plot = 
+  ggplot(accel_data, aes(x = week, y = total_act, color = week)) +
+  geom_point(alpha = .5) +
+  geom_smooth() +
+  labs(
+    title = "Total Activity Plot",
+    x = "Week",
+    y = "Total Activity",
+    caption = "Data from Advanced Cardiac Care Center of CUMC"
+  ) +
+  viridis::scale_color_viridis(
+    name = "Week"
+  ) + 
+  theme_bw() + 
+  theme(legend.position = "bottom")
 year_plot
 ```
 
+###Average Activity During Week Over Time
+
 ```{r all_weeks_avg_per_day}
-week_plot = ggplot(accel_data, aes(x = day, y = avg_act)) + 
-  geom_boxplot()
+week_plot = 
+  ggplot(accel_data, aes(x = day, y = avg_act)) + 
+  geom_boxplot(color = "orange", fill = "blue", alpha = .5) +
+  labs(
+    title = "Average Activity During Week",
+    x = "Day",
+    y = "Average Activity",
+    caption = "Data from Advanced Cardiac Care Center of CUMC"
+  ) +
+  theme_bw() + 
+  theme(legend.position = "bottom")
 week_plot
 ```
 
-```{r 24_hour_week}
+###24 Hour Activity Throughout Week Over Time
+
+```{r 24_hour_week, message = FALSE}
 week_hour_act = accel_data %>% 
-  gather(key = daily_act, value = activity, activity_1:activity_1440) %>% 
-  filter(week == 30) %>% 
+  gather(key = daily_act, value = activity, activity_1:activity_1440) %>%
   mutate(daily_act = str_replace(daily_act, "activity_", "")) %>% 
   mutate(daily_act = as.numeric(daily_act) / 60)
 
-week_hour_plot = ggplot(week_hour_act, aes(x = daily_act, y = activity)) +
-  geom_point() +
+week_hour_plot = 
+  ggplot(week_hour_act, aes(x = daily_act, y = activity)) +
+  geom_point(color = "orchid", alpha = .2) +
   scale_x_continuous(breaks = seq(0, 24, by = 6)) +
   facet_grid(. ~ day) +
-  geom_smooth()
+  geom_smooth() +
+  labs(
+    title = "24 Hour Activity Over Time",
+    x = "Hours",
+    y = "Activity",
+    caption = "Data from Advanced Cardiac Care Center of CUMC"
+  ) +
+  theme_bw() 
 week_hour_plot
 ```
 
-```{r 24_hour_sunday}
+###Example 24 Hour Activity on Sunday, Week 45
+
+```{r 24_hour_sunday, message = FALSE}
 sunday_act = accel_data %>% 
   gather(key = daily_act, value = activity, activity_1:activity_1440) %>%
   filter(day == "Sunday", week == 45) %>% 
@@ -70,10 +105,16 @@ sunday_act = accel_data %>%
   mutate(daily_act = as.numeric(daily_act) / 60)
 
 sunday_plot = ggplot(sunday_act, aes(x = daily_act, y = activity)) +
-  geom_point() +
+  geom_point(color = "gold", alpha = .6) +
   scale_x_continuous(breaks = seq(0, 24, by = 2)) +
-  facet_grid(. ~ day) +
-  geom_smooth()
+  geom_smooth() +
+  labs(
+    title = "24 Hour Activity Sunday, Week 45",
+    x = "Hours",
+    y = "Activity",
+    caption = "Data from Advanced Cardiac Care Center of CUMC"
+  ) +
+  theme_bw() 
 sunday_plot
 ```
 
