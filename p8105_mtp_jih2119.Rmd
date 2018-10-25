@@ -1,5 +1,6 @@
 ---
 title: "Midterm Project"
+author: Justin Hsie
 output: github_document
 ---
 
@@ -66,16 +67,16 @@ week_plot =
     y = "Average Activity",
     caption = "Data from Advanced Cardiac Care Center of CUMC"
   ) +
-  theme_bw() + 
-  theme(legend.position = "bottom")
+  theme_bw()
 week_plot
 ```
 
-###24 Hour Activity Throughout Week Over Time
+###24 Hour Activity During Week 30
 
 ```{r 24_hour_week, message = FALSE}
 week_hour_act = accel_data %>% 
   gather(key = daily_act, value = activity, activity_1:activity_1440) %>%
+  filter(week == 30) %>% 
   mutate(daily_act = str_replace(daily_act, "activity_", "")) %>% 
   mutate(daily_act = as.numeric(daily_act) / 60)
 
@@ -86,7 +87,7 @@ week_hour_plot =
   facet_grid(. ~ day) +
   geom_smooth() +
   labs(
-    title = "24 Hour Activity Over Time",
+    title = "24 Hour Activity During Week 30",
     x = "Hours",
     y = "Activity",
     caption = "Data from Advanced Cardiac Care Center of CUMC"
@@ -95,12 +96,12 @@ week_hour_plot =
 week_hour_plot
 ```
 
-###Example 24 Hour Activity on Sunday, Week 45
+###Example 24 Hour Activity on Wednesday, Week 30
 
 ```{r 24_hour_sunday, message = FALSE}
 sunday_act = accel_data %>% 
   gather(key = daily_act, value = activity, activity_1:activity_1440) %>%
-  filter(day == "Sunday", week == 45) %>% 
+  filter(day == "Wednesday", week == 30) %>% 
   mutate(daily_act = str_replace(daily_act, "activity_", "")) %>% 
   mutate(daily_act = as.numeric(daily_act) / 60)
 
@@ -109,7 +110,7 @@ sunday_plot = ggplot(sunday_act, aes(x = daily_act, y = activity)) +
   scale_x_continuous(breaks = seq(0, 24, by = 2)) +
   geom_smooth() +
   labs(
-    title = "24 Hour Activity Sunday, Week 45",
+    title = "24 Hour Activity Wednesday, Week 30",
     x = "Hours",
     y = "Activity",
     caption = "Data from Advanced Cardiac Care Center of CUMC"
